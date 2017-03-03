@@ -5,5 +5,5 @@ from sirbot.hookimpl import hookimpl
 
 
 @hookimpl
-def clients(loop, queue, router, config):
-    return METADATA['name'], Client(loop=loop, queue=queue, router=router, config=config.get(METADATA['name']))
+def clients(loop, queue):
+    return METADATA['name'], Client(loop=loop, queue=queue)
