@@ -12,7 +12,7 @@ if sys.version_info < (3, 5):
 
 
 def load_package_meta():
-    meta_path = convert_path('./sirbot_plugin_web/__meta__.py')
+    meta_path = convert_path('./sirbot_plugin/__meta__.py')
     meta_ns = {}
     with open(meta_path) as f:
         exec(f.read(), meta_ns)
@@ -52,7 +52,7 @@ def parse_reqs(req_path='./requirements.txt'):
 def parse_readme():
     """Parse contents of the README."""
     # Get the long description from the relevant file
-    readme_file = str(Path(__file__).parent / 'README.md')
+    readme_file = str(Path(__file__).parent / 'README.rst')
     with codecs.open(readme_file, encoding='utf-8') as handle:
         long_description = handle.read()
 
@@ -67,10 +67,10 @@ setup(
         'bot',
     ],
     packages=[
-        'sirbot_plugin_web'
+        'sirbot_plugin'
     ],
     package_dir={
-        'sirbot_plugin_web': 'sirbot_plugin_web',
+        'sirbot_plugin': 'sirbot_plugin',
     },
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and
