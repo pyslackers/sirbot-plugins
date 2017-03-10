@@ -32,6 +32,10 @@ class GiphyPlugin(Plugin):
     def facade(self):
         return Giphy(token=self._token, session=self._session)
 
+    @property
+    def started(self):
+        return True
+
     def __del__(self):
         if self._session:
             self._session.close()

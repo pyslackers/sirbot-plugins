@@ -37,6 +37,10 @@ class PyPiPlugin(Plugin):
     def facade(self):
         return PyPi(session=self._session, client=self._client)
 
+    @property
+    def started(self):
+        return True
+
     def __del__(self):
         if self._session:
             self._session.close()
