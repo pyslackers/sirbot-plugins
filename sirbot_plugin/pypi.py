@@ -24,28 +24,21 @@ class PyPiPlugin(Plugin):
         self._session = None
         self._client = None
         self._loop = loop
+        self._started = False
 
-    def configure(self, config, router, facades):
-        if 'loglevel' in config:
-            logger.setLevel(config['logleve'])
+    async def configure(self, config, router, session, facades):
+        self._session = session
 
     async def start(self):
-        self._session = aiohttp.ClientSession(loop=self._loop)
-        self._client = ServerProxy(self.ROOT_URL, loop=self._loop)
-        pass
+        self._client = ServerProxy(self.ROOT_URL, loop=self._loop, client=self._session)
+        self._started = True
 
     def facade(self):
         return PyPi(session=self._session, client=self._client)
 
     @property
     def started(self):
-        return True
-
-    def __del__(self):
-        if self._session:
-            self._session.close()
-        if self._client:
-            self._client.close()
+        return self._started
 
 
 class PyPi:
