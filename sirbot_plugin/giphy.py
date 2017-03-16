@@ -21,12 +21,10 @@ class GiphyPlugin(Plugin):
         self._token = os.environ.get('SIRBOT_GIPHY_TOKEN') or "dc6zaTOxFJmzC"
         self._loop = loop
 
-    def configure(self, config, router, facades):
-        if 'loglevel' in config:
-            logger.setLevel(config['logleve'])
+    async def configure(self, config, router, session, facades):
+        self._session = session
 
     async def start(self):
-        self._session = aiohttp.ClientSession(loop=self._loop)
         pass
 
     def facade(self):
@@ -35,10 +33,6 @@ class GiphyPlugin(Plugin):
     @property
     def started(self):
         return True
-
-    def __del__(self):
-        if self._session:
-            self._session.close()
 
 
 class Giphy:
