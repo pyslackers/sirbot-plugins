@@ -4,7 +4,7 @@ import sqlite3
 from sirbot.plugin import Plugin
 from sirbot.hookimpl import hookimpl
 
-logger = logging.getLogger('sirbot.aioodbc')
+logger = logging.getLogger('sirbot.sqlite')
 
 
 @hookimpl
@@ -45,6 +45,7 @@ class SQLiteFacade:
         self.cursor = cursor
 
     async def execute(self, sql, params=[]):
+        logger.debug('''Executing query: %s''', sql)
         self.cursor.execute(sql, params)
 
     async def commit(self):
