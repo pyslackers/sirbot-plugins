@@ -25,6 +25,13 @@ class SQLitePlugin(Plugin):
         self._connection = sqlite3.connect(file)
         self._connection.row_factory = sqlite3.Row
 
+        db = self._connection.cursor()
+        db.execute('''CREATE TABLE IF NOT EXISTS metadata (
+                   plugin TEXT PRIMARY KEY,
+                   version TEXT)
+                  ''')
+        self._connection.commit()
+
     async def start(self):
         self._started = True
 
@@ -35,8 +42,33 @@ class SQLitePlugin(Plugin):
     def started(self):
         return self._started
 
+    async def update(self, config, sirbot_plugins):
+        file = config.get('file', None)
+        if not file:
+            return
+
+        self._connection = sqlite3.connect(file)
+        self._connection.row_factory = sqlite3.Row
+        db = self.facade()
+
+        await db.execute('''SELECT * FROM metadata''')
+        metadata = await db.fetchall()
+        metadata = {plugin: {'version': version} for plugin, version in metadata}
+
+        for name, plugin in sirbot_plugins.items():
+            database_update = getattr(plugin['plugin'], 'database_update', None)
+            if callable(database_update):
+                plugin_metadata = metadata.get(name, {})
+                old_version = plugin_metadata.get('version')
+                new_version = await database_update(metadata.get(name, {}), self.facade())
+                if new_version != old_version:
+                    await db.execute('''INSERT OR REPLACE INTO metadata (plugin, version)
+                                      VALUES (?, ?)''', (name, new_version))
+        self._connection.commit()
+
     def __del__(self):
-        self._connection.close()
+        if self._connection:
+            self._connection.close()
 
 
 class SQLiteFacade:

@@ -12,6 +12,8 @@ def plugins(loop):
 
 
 class CandyPlugin(Plugin):
+    __name__ = 'candy'
+    __version__ = '0.0.1'
 
     def __init__(self, loop):
         super().__init__(loop)
@@ -40,6 +42,19 @@ class CandyPlugin(Plugin):
             candy INT DEFAULT 0
             )
             ''')
+        await db.execute('''
+            INSERT OR REPlACE INTO metadata (plugin, version) VALUES (?, ?)''', (self.__name__, self.__version__))
+        await db.commit()
+
+    async def database_update(self, metadata, db):
+        # Example for database update
+        #
+        # if metadata['version'] == '0.0.1':
+        #     await db.execute('''ALTER TABLE candy ADD COLUMN test TEXT''')
+        #     metadata['version'] = '0.0.2'
+        #
+        # return metadata['version']
+        pass
 
 
 class CandyFacade:
