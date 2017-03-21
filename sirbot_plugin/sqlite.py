@@ -9,10 +9,13 @@ logger = logging.getLogger('sirbot.sqlite')
 
 @hookimpl
 def plugins(loop):
-    return 'database', SQLitePlugin(loop)
+    return SQLitePlugin(loop)
 
 
 class SQLitePlugin(Plugin):
+    __name__ = 'database'
+    __version = '0.0.1'
+
     def __init__(self, loop):
         super().__init__(loop)
         self._loop = loop
@@ -60,10 +63,14 @@ class SQLitePlugin(Plugin):
             if callable(database_update):
                 plugin_metadata = metadata.get(name, {})
                 old_version = plugin_metadata.get('version')
-                new_version = await database_update(metadata.get(name, {}), self.facade())
-                if new_version != old_version:
+                current_version = plugin['plugin'].__version__
+
+                if current_version != old_version:
+                    logger.debug('Updating database of %s from %s to %s', name, old_version, current_version)
+                    await database_update(metadata.get(name, {}), self.facade())
                     await db.execute('''INSERT OR REPLACE INTO metadata (plugin, version)
-                                      VALUES (?, ?)''', (name, new_version))
+                                      VALUES (?, ?)''', (name, current_version))
+
         self._connection.commit()
 
     def __del__(self):
@@ -94,6 +101,18 @@ class SQLiteFacade:
 
     async def fetchall(self):
         return self.cursor.fetchall()
+
+    async def set_plugin_metadata(self, plugin):
+        await self.execute('''SELECT * FROM metadata WHERE plugin = ?''', (plugin.__name__,))
+        old_metadata = await self.fetchone()
+
+        if old_metadata and old_metadata['version'] != plugin.__version__:
+            logger.error(
+                '''Database not updated for plugin %s version %s. Please run `sirbot update` before continuing''',
+                plugin.__name__, plugin.__version__)
+        elif not old_metadata:
+            await self.execute('''INSERT OR REPLACE INTO metadata (plugin, version) VALUES (?, ?)''',
+                               (plugin.__name__, plugin.__version__))
 
     def __del__(self):
         self.cursor.close()

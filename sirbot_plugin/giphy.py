@@ -11,10 +11,13 @@ logger = logging.getLogger('sirbot.giphy')
 
 @hookimpl
 def plugins(loop):
-    return 'giphy', GiphyPlugin(loop)
+    return GiphyPlugin(loop)
 
 
 class GiphyPlugin(Plugin):
+    __name__ = 'giphy'
+    __version__ = '0.0.1'
+
     def __init__(self, loop):
         super().__init__(loop)
         self._session = None

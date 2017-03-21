@@ -13,10 +13,12 @@ logger = logging.getLogger('sirbot.pypi')
 
 @hookimpl
 def plugins(loop):
-    return 'pypi', PyPiPlugin(loop)
+    return PyPiPlugin(loop)
 
 
 class PyPiPlugin(Plugin):
+    __name__ = 'pypi'
+    __version__ = '0.0.1'
     ROOT_URL = 'https://pypi.python.org/pypi'
 
     def __init__(self, loop):

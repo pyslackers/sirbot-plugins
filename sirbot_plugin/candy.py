@@ -8,7 +8,7 @@ logger = logging.getLogger('sirbot.candy')
 
 @hookimpl
 def plugins(loop):
-    return 'candy', CandyPlugin(loop)
+    return CandyPlugin(loop)
 
 
 class CandyPlugin(Plugin):
@@ -42,8 +42,7 @@ class CandyPlugin(Plugin):
             candy INT DEFAULT 0
             )
             ''')
-        await db.execute('''
-            INSERT OR REPlACE INTO metadata (plugin, version) VALUES (?, ?)''', (self.__name__, self.__version__))
+        await db.set_plugin_metadata(self)
         await db.commit()
 
     async def database_update(self, metadata, db):
@@ -54,7 +53,7 @@ class CandyPlugin(Plugin):
         #     metadata['version'] = '0.0.2'
         #
         # return metadata['version']
-        pass
+        return self.__version__
 
 
 class CandyFacade:
