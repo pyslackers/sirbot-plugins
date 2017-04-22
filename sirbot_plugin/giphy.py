@@ -40,7 +40,7 @@ class GiphyPlugin(Plugin):
 
 class Giphy:
     ROOT_URL = 'http://api.giphy.com/v1/{}'
-    SEARCH_TERM_URL = ROOT_URL.format('gifs/translate?s={terms}')
+    SEARCH_TERM_URL = ROOT_URL.format('gifs/search?q={terms}')
     TRENDING_URL = ROOT_URL.format('gifs/trending?')
     RANDOM_URL = ROOT_URL.format('gifs/random?')
     BY_ID_URL = ROOT_URL.format('gifs/{gif_id}?')
@@ -51,7 +51,8 @@ class Giphy:
 
     async def search(self, terms):
         data = await self._query(self.SEARCH_TERM_URL.format(terms='+'.join(terms)))
-        return data['data']['images']['original']['url']
+        urls = [result['images']['original']['url'] for result in data['data']]
+        return urls
 
     async def trending(self):
         data = await self._query(self.TRENDING_URL)

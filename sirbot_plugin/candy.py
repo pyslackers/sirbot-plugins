@@ -28,7 +28,7 @@ class CandyPlugin(Plugin):
         self._started = True
 
     def facade(self):
-        return CandyFacade()
+        return CandyFacade(self._facades)
 
     @property
     def started(self):
@@ -57,10 +57,11 @@ class CandyPlugin(Plugin):
 
 
 class CandyFacade:
-    def __init__(self):
-        pass
+    def __init__(self, facades):
+        self._facades = facades
 
-    async def add(self, user, count=1, *, db):
+    async def add(self, user, count=1):
+        db = self._facades.get('database')
         await db.execute('''SELECT candy FROM candy WHERE user = ? ''', (user, ))
         value = await db.fetchone()
         if value:
@@ -69,9 +70,11 @@ class CandyFacade:
             value = count
 
         await db.execute('''INSERT OR REPLACE INTO candy (user, candy) VALUES (?, ?)''', (user, value))
+        await db.commit()
         return value
 
-    async def top(self, count, *, db):
+    async def top(self, count):
+        db = self._facades.get('database')
         await db.execute('''SELECT * FROM candy ORDER BY candy DESC LIMIT ?''', (count, ))
         data = await db.fetchall()
         return data
