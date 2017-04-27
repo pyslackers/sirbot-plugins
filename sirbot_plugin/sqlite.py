@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import os
 
 from sirbot.plugin import Plugin
 from sirbot.hookimpl import hookimpl
@@ -48,6 +49,8 @@ class SQLitePlugin(Plugin):
     async def update(self, config, sirbot_plugins):
         file = config.get('file', None)
         if not file:
+            return
+        if not os.path.isfile(file):
             return
 
         self._connection = sqlite3.connect(file)

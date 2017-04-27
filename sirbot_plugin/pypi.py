@@ -51,7 +51,7 @@ class PyPi:
         self._session = session
         self.client = client
 
-    async def pypi_search(self, term):
+    async def search(self, term):
         results = await self.client.search({'name': term})
         for item in results:
             item['distance'] = levenshtein(str(term), item["name"])
