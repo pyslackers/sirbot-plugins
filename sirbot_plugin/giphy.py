@@ -49,8 +49,10 @@ class Giphy:
         self._token = token
         self._session = session
 
-    async def search(self, terms):
-        data = await self._query(self.SEARCH_TERM_URL.format(terms='+'.join(terms)))
+    async def search(self, *terms):
+        data = await self._query(
+            self.SEARCH_TERM_URL.format(terms='+'.join(terms))
+        )
         urls = [result['images']['original']['url'] for result in data['data']]
         return urls
 
