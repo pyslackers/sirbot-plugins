@@ -1,9 +1,11 @@
 import logging
 import sqlite3
 import os
+import yaml
 
 from sirbot.plugin import Plugin
 from sirbot.hookimpl import hookimpl
+from sirbot.utils import merge_dict
 
 logger = logging.getLogger('sirbot.sqlite')
 
@@ -14,26 +16,39 @@ def plugins(loop):
 
 
 class SQLitePlugin(Plugin):
-    __name__ = 'database'
+    __name__ = 'sqlite'
     __version = '0.0.1'
+    __facade__ = 'database'
 
     def __init__(self, loop):
         super().__init__(loop)
         self._loop = loop
-
+        self._config = None
         self._started = False
         self._connection = None
 
     async def configure(self, config, router, session, facades):
-        file = config.get('file', ':memory:')
-        self._connection = sqlite3.connect(file)
+
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '..', 'config.yml'
+        )
+
+        with open(path) as file:
+            defaultconfig = yaml.load(file)
+
+        self._config = merge_dict(config, defaultconfig[self.__name__])
+        self._connection = sqlite3.connect(self._config['file'])
         self._connection.row_factory = sqlite3.Row
 
         db = self._connection.cursor()
-        db.execute('''CREATE TABLE IF NOT EXISTS metadata (
+        db.execute('''
+                   CREATE TABLE IF NOT EXISTS metadata 
+                   (
                    plugin TEXT PRIMARY KEY,
-                   version TEXT)
-                  ''')
+                   version TEXT
+                   )
+                   ''')
         self._connection.commit()
 
     async def start(self):
