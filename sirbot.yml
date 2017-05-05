@@ -1,7 +1,0 @@
-core:
-  plugins:
-    - sirbot_plugin.giphy
-    - sirbot_plugin.pypi
-    - sirbot_plugin.sqlite
-database:
-  file: sirbot.db
