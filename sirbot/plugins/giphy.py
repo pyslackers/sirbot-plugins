@@ -2,8 +2,8 @@ import os
 import random
 import logging
 
-from sirbot.plugin import Plugin
-from sirbot.hookimpl import hookimpl
+from sirbot.core.plugin import Plugin
+from sirbot.core.hookimpl import hookimpl
 
 logger = logging.getLogger('sirbot.giphy')
 

@@ -12,7 +12,7 @@ if sys.version_info < (3, 5):
 
 
 def load_package_meta():
-    meta_path = convert_path('./sirbot_plugin/__meta__.py')
+    meta_path = convert_path('./sirbot/plugins/__meta__.py')
     meta_ns = {}
     with open(meta_path) as f:
         exec(f.read(), meta_ns)
@@ -61,10 +61,13 @@ setup(
         'bot',
     ],
     packages=[
-        'sirbot_plugin'
+        'sirbot.plugins'
     ],
     package_dir={
-        'sirbot_plugin': 'sirbot_plugin',
+        'sirbot.plugins': 'sirbot/plugins',
+    },
+    package_data={
+        'sirbot.plugins': ['config.yml']
     },
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and

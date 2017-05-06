@@ -3,9 +3,9 @@ import sqlite3
 import os
 import yaml
 
-from sirbot.plugin import Plugin
-from sirbot.hookimpl import hookimpl
-from sirbot.utils import merge_dict
+from sirbot.core.plugin import Plugin
+from sirbot.core.hookimpl import hookimpl
+from sirbot.core.utils import merge_dict
 
 logger = logging.getLogger('sirbot.sqlite')
 
@@ -30,8 +30,7 @@ class SQLitePlugin(Plugin):
     async def configure(self, config, router, session, facades):
 
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '..', 'config.yml'
+            os.path.dirname(os.path.abspath(__file__)), 'config.yml'
         )
 
         with open(path) as file:
