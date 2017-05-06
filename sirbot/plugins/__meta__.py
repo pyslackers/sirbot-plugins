@@ -5,7 +5,7 @@ DATA = {
     "copyright": 'Copyright 2016 Python Developers Community',
     "description": 'Plugins for the good Sir Bot a lot',
     "license": 'MIT',
-    "name": 'sirbot_plugins',
+    "name": 'sirbot.plugins',
     "url": 'https://gitlab.com/PythonDevCommunity/sirbot-plugin',
     # Versions should comply with PEP440. For a discussion on
     # single-sourcing the version across setup.py and the project code,
