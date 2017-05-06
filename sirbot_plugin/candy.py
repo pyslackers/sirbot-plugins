@@ -62,19 +62,26 @@ class CandyFacade:
 
     async def add(self, user, count=1):
         db = self._facades.get('database')
-        await db.execute('''SELECT candy FROM candy WHERE user = ? ''', (user, ))
+        await db.execute('''SELECT candy FROM candy WHERE user = ? ''',
+                         (user, )
+                         )
         value = await db.fetchone()
         if value:
             value = value['candy'] + count
         else:
             value = count
 
-        await db.execute('''INSERT OR REPLACE INTO candy (user, candy) VALUES (?, ?)''', (user, value))
+        await db.execute('''INSERT OR REPLACE INTO candy (user, candy)
+                            VALUES (?, ?)''',
+                         (user, value)
+                         )
         await db.commit()
         return value
 
     async def top(self, count):
         db = self._facades.get('database')
-        await db.execute('''SELECT * FROM candy ORDER BY candy DESC LIMIT ?''', (count, ))
+        await db.execute('''SELECT * FROM candy ORDER BY candy DESC LIMIT ?''',
+                         (count, )
+                         )
         data = await db.fetchall()
         return data
