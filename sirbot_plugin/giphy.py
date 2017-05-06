@@ -1,5 +1,4 @@
 import os
-import aiohttp
 import random
 import logging
 
@@ -63,7 +62,6 @@ class Giphy:
 
     async def random(self):
         data = await self._query(self.RANDOM_URL)
-        num = random.randint(0, len(data['data']) - 1)
         return data['data']['image_url']
 
     async def by_id(self, id_):

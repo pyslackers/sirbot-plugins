@@ -43,7 +43,7 @@ class SQLitePlugin(Plugin):
 
         db = self._connection.cursor()
         db.execute('''
-                   CREATE TABLE IF NOT EXISTS metadata 
+                   CREATE TABLE IF NOT EXISTS metadata
                    (
                    plugin TEXT PRIMARY KEY,
                    version TEXT
@@ -74,20 +74,30 @@ class SQLitePlugin(Plugin):
 
         await db.execute('''SELECT * FROM metadata''')
         metadata = await db.fetchall()
-        metadata = {plugin: {'version': version} for plugin, version in metadata}
+        metadata = {
+            plugin: {'version': version} for plugin, version in metadata
+        }
 
         for name, plugin in sirbot_plugins.items():
-            database_update = getattr(plugin['plugin'], 'database_update', None)
+            database_update = getattr(
+                plugin['plugin'], 'database_update', None
+            )
             if callable(database_update):
                 plugin_metadata = metadata.get(name, {})
                 old_version = plugin_metadata.get('version')
                 current_version = plugin['plugin'].__version__
 
                 if current_version != old_version:
-                    logger.debug('Updating database of %s from %s to %s', name, old_version, current_version)
-                    await database_update(metadata.get(name, {}), self.facade())
-                    await db.execute('''INSERT OR REPLACE INTO metadata (plugin, version)
-                                      VALUES (?, ?)''', (name, current_version))
+                    logger.debug('Updating database of %s from %s to %s',
+                                 name, old_version, current_version)
+                    await database_update(
+                        metadata.get(name, {}), self.facade()
+                    )
+                    await db.execute('''INSERT OR REPLACE INTO
+                                        metadata (plugin, version)
+                                        VALUES (?, ?)''',
+                                     (name, current_version)
+                                     )
 
         self._connection.commit()
 
@@ -101,7 +111,7 @@ class SQLiteFacade:
         self._connection = connection
         self.cursor = cursor
 
-    async def execute(self, sql, params=[]):
+    async def execute(self, sql, params=tuple()):
         logger.debug('''Executing query: %s''', sql)
         self.cursor.execute(sql, params)
 
@@ -121,15 +131,18 @@ class SQLiteFacade:
         return self.cursor.fetchall()
 
     async def set_plugin_metadata(self, plugin):
-        await self.execute('''SELECT * FROM metadata WHERE plugin = ?''', (plugin.__name__,))
+        await self.execute('''SELECT * FROM metadata WHERE plugin = ?''',
+                           (plugin.__name__,))
         old_metadata = await self.fetchone()
 
         if old_metadata and old_metadata['version'] != plugin.__version__:
             logger.error(
-                '''Database not updated for plugin %s version %s. Please run `sirbot update` before continuing''',
+                '''Database not updated for plugin %s version %s.
+                 Please run `sirbot update` before continuing''',
                 plugin.__name__, plugin.__version__)
         elif not old_metadata:
-            await self.execute('''INSERT OR REPLACE INTO metadata (plugin, version) VALUES (?, ?)''',
+            await self.execute('''INSERT OR REPLACE INTO
+                                  metadata (plugin, version) VALUES (?, ?)''',
                                (plugin.__name__, plugin.__version__))
 
     def __del__(self):

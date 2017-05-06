@@ -1,4 +1,3 @@
-import aiohttp
 import logging
 
 from aiohttp_xmlrpc.client import ServerProxy
@@ -32,7 +31,11 @@ class PyPiPlugin(Plugin):
         self._session = session
 
     async def start(self):
-        self._client = ServerProxy(self.ROOT_URL, loop=self._loop, client=self._session)
+        self._client = ServerProxy(
+            self.ROOT_URL,
+            loop=self._loop,
+            client=self._session
+        )
         self._started = True
 
     def facade(self):
