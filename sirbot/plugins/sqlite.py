@@ -3,11 +3,10 @@ import sqlite3
 import os
 import yaml
 
-from sirbot.core.plugin import Plugin
-from sirbot.core.hookimpl import hookimpl
-from sirbot.core.utils import merge_dict
+from sirbot.core import Plugin, hookimpl
+from sirbot.utils import merge_dict
 
-logger = logging.getLogger('sirbot.sqlite')
+logger = logging.getLogger(__name__)
 
 
 @hookimpl
@@ -17,7 +16,7 @@ def plugins(loop):
 
 class SQLitePlugin(Plugin):
     __name__ = 'sqlite'
-    __version = '0.0.1'
+    __version__ = '0.0.1'
     __facade__ = 'database'
 
     def __init__(self, loop):

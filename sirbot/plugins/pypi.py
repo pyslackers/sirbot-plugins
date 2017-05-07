@@ -4,10 +4,9 @@ from aiohttp_xmlrpc.client import ServerProxy
 from distance import levenshtein
 from operator import itemgetter
 
-from sirbot.core.plugin import Plugin
-from sirbot.core.hookimpl import hookimpl
+from sirbot.core import hookimpl, Plugin
 
-logger = logging.getLogger('sirbot.pypi')
+logger = logging.getLogger(__name__)
 
 
 @hookimpl
