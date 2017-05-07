@@ -1,2 +1,6 @@
 sqlite:
   file: ':memory:'
+
+github:
+  endpoint: '/github'
+  plugins: []
