@@ -1,9 +1,8 @@
 import logging
 
-from sirbot.core.plugin import Plugin
-from sirbot.core.hookimpl import hookimpl
+from sirbot.core import hookimpl, Plugin
 
-logger = logging.getLogger('sirbot.candy')
+logger = logging.getLogger(__name__)
 
 
 @hookimpl
