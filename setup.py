@@ -61,10 +61,12 @@ setup(
         'bot',
     ],
     packages=[
-        'sirbot.plugins'
+        'sirbot.plugins',
+        'sirbot.plugins.github'
     ],
     package_dir={
         'sirbot.plugins': 'sirbot/plugins',
+        'sirbot.plugins.github': 'sirbot/plugins/github'
     },
     package_data={
         'sirbot.plugins': ['config.yml']
