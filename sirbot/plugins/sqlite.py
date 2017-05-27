@@ -108,6 +108,7 @@ class SQLiteFacade:
     def __init__(self, connection, cursor):
         self._connection = connection
         self.cursor = cursor
+        self.type = 'sqlite'
 
     async def execute(self, sql, params=tuple()):
         logger.debug('''Executing query: %s''', sql)
