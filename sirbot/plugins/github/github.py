@@ -1,8 +1,6 @@
 import logging
 import os
 import yaml
-import pluggy
-import importlib
 import asyncio
 import inspect
 import hmac
@@ -14,7 +12,6 @@ from collections import defaultdict
 from sirbot.core import Plugin
 from sirbot.utils import merge_dict, ensure_future
 
-from . import hookspecs
 from .errors import GitHubSetupError
 
 logger = logging.getLogger(__name__)
@@ -58,11 +55,8 @@ class GitHubPlugin(Plugin):
         self._router = router
         self._facades = facades
 
-        pm = self._initialize_plugins()
-
-        self._dispatcher = Dispatcher(
+        self._dispatcher = GitHubDispatcher(
             config=self._config,
-            pm=pm,
             facades=self._facades,
             verification=self._verification,
             loop=self._loop
@@ -77,25 +71,8 @@ class GitHubPlugin(Plugin):
 
         self._started = True
 
-    def _initialize_plugins(self):
-        """
-        Import and register the plugins
-
-        Most likely composed of functions reacting to messages, events, slash
-        commands and actions
-        """
-        logger.debug('Initializing handlers for github events')
-        pm = pluggy.PluginManager('sirbot.github')
-        pm.add_hookspecs(hookspecs)
-
-        for plugin in self._config['plugins']:
-            try:
-                p = importlib.import_module(plugin)
-                pm.register(p)
-            except Exception as e:
-                logger.exception(e)
-
-        return pm
+    def facade(self):
+        return GitHubFacade(self._dispatcher)
 
     async def start(self):
         pass
@@ -105,17 +82,23 @@ class GitHubPlugin(Plugin):
         return self._started
 
 
-class Dispatcher:
+class GitHubFacade:
+    def __init__(self, dispatcher):
+        self._dispatcher = dispatcher
 
-    def __init__(self, config, facades, pm, verification, loop):
+    def add_event(self, event, func):
+        self._dispatcher.register(event, func)
+
+
+class GitHubDispatcher:
+
+    def __init__(self, config, facades, verification, loop):
         self._config = config
         self._facades = facades
         self._loop = loop
         self._verification = verification
 
         self._events = defaultdict(list)
-
-        self._register(pm)
 
     async def incoming(self, request):
 
@@ -148,23 +131,12 @@ class Dispatcher:
 
         return Response(status=200)
 
-    def _register(self, pm):
-        """
-        Find and register the functions handling specifics events
+    def register(self, event, func):
+        logger.debug('Registering event: %s, %s from %s',
+                     event,
+                     func.__name__,
+                     inspect.getabsfile(func))
 
-        hookspecs: def register_github_events()
-
-        :param pm: pluggy plugin manager
-        :return None
-        """
-        all_events = pm.hook.register_github_events()
-        for events in all_events:
-            for event in events:
-                if not asyncio.iscoroutinefunction(event['func']):
-                    logger.debug('Function is not a coroutine, converting.')
-                    event['func'] = asyncio.coroutine(event['func'])
-                logger.debug('Registering github event: %s, %s from %s',
-                             event['event'],
-                             event['func'].__name__,
-                             inspect.getabsfile(event['func']))
-                self._events[event['event']].append(event['func'])
+        if not asyncio.iscoroutinefunction(func):
+            func = asyncio.coroutine(func)
+        self._events[event] = func
