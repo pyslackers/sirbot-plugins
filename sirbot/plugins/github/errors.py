@@ -1,5 +1,5 @@
-from sirbot.core.errors import SirBotALotError
+from sirbot.core.errors import SirBotError
 
 
-class GitHubSetupError(SirBotALotError):
+class GitHubSetupError(SirBotError):
     """Error during github plugin configuration"""
