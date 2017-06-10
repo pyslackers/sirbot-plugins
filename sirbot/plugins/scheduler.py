@@ -1,4 +1,5 @@
 import logging
+import inspect
 
 from sirbot.core import hookimpl, Plugin
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -52,13 +53,15 @@ class SchedulerFacade:
         self.scheduler = scheduler
         self._facades = facades
 
-    def add_job(self, func, trigger, args=None, *job_args, **job_kwargs):
-
+    def add_job(self, id_, func, trigger, args=None, *job_args, **job_kwargs):
+        logger.debug('Registering job: %s, from %s',
+                     func.__name__,
+                     inspect.getabsfile(func))
         if not args:
             args = list()
         elif type(args) is tuple:
             args = list(args)
 
         args.insert(0, self._facades.new())
-        self.scheduler.add_job(func, trigger=trigger, args=args,
-                               *job_args, **job_kwargs)
+        return self.scheduler.add_job(func, trigger=trigger, args=args, id=id_,
+                                      *job_args, **job_kwargs)
