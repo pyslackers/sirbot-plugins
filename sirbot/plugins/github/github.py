@@ -139,4 +139,4 @@ class GitHubDispatcher:
 
         if not asyncio.iscoroutinefunction(func):
             func = asyncio.coroutine(func)
-        self._events[event] = func
+        self._events[event].append(func)
