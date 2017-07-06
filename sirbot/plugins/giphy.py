@@ -22,21 +22,21 @@ class GiphyPlugin(Plugin):
         self._token = os.environ.get('SIRBOT_GIPHY_TOKEN') or "dc6zaTOxFJmzC"
         self._loop = loop
 
-    async def configure(self, config, router, session, facades):
+    async def configure(self, config, router, session, registry):
         self._session = session
 
     async def start(self):
         pass
 
-    def facade(self):
-        return Giphy(token=self._token, session=self._session)
+    def factory(self):
+        return GiphyWrapper(token=self._token, session=self._session)
 
     @property
     def started(self):
         return True
 
 
-class Giphy:
+class GiphyWrapper:
     ROOT_URL = 'http://api.giphy.com/v1/{}'
     SEARCH_TERM_URL = ROOT_URL.format('gifs/search?q={terms}')
     TRENDING_URL = ROOT_URL.format('gifs/trending?')

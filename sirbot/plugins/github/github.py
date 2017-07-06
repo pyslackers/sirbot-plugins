@@ -22,6 +22,7 @@ class GitHubPlugin(Plugin):
     __version__ = '0.0.1'
 
     def __init__(self, loop):
+        super().__init__(loop)
         self._loop = loop
         self._started = False
 
@@ -29,10 +30,10 @@ class GitHubPlugin(Plugin):
         self._config = None
         self._router = None
         self._dispatcher = None
-        self._facades = None
+        self._registry = None
         self._verification = None
 
-    async def configure(self, config, router, session, facades):
+    async def configure(self, config, router, session, registry):
         logger.debug('Configuring github plugin')
 
         self._verification = os.environ.get('SIRBOT_GITHUB_SECRET')
@@ -53,11 +54,11 @@ class GitHubPlugin(Plugin):
         self._session = session
         self._config = config
         self._router = router
-        self._facades = facades
+        self._registry = registry
 
         self._dispatcher = GitHubDispatcher(
             config=self._config,
-            facades=self._facades,
+            registry=self._registry,
             verification=self._verification,
             loop=self._loop
         )
@@ -71,8 +72,8 @@ class GitHubPlugin(Plugin):
 
         self._started = True
 
-    def facade(self):
-        return GitHubFacade(self._dispatcher)
+    def factory(self):
+        return GitHubWrapper(self._dispatcher)
 
     async def start(self):
         pass
@@ -82,7 +83,7 @@ class GitHubPlugin(Plugin):
         return self._started
 
 
-class GitHubFacade:
+class GitHubWrapper:
     def __init__(self, dispatcher):
         self._dispatcher = dispatcher
 
@@ -92,9 +93,9 @@ class GitHubFacade:
 
 class GitHubDispatcher:
 
-    def __init__(self, config, facades, verification, loop):
+    def __init__(self, config, registry, verification, loop):
         self._config = config
-        self._facades = facades
+        self._registry = registry
         self._loop = loop
         self._verification = verification
 
@@ -125,8 +126,7 @@ class GitHubDispatcher:
         funcs = self._events.get(event['type'], list())
         logger.debug('%s handlers found for "%s"', len(funcs), event['type'])
         for func in funcs:
-            facade = self._facades.new()
-            f = func(event, facade)
+            f = func(event, self._registry)
             ensure_future(coroutine=f, loop=self._loop, logger=logger)
 
         return Response(status=200)

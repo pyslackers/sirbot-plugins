@@ -26,7 +26,7 @@ class PyPiPlugin(Plugin):
         self._loop = loop
         self._started = False
 
-    async def configure(self, config, router, session, facades):
+    async def configure(self, config, router, session, registry):
         self._session = session
 
     async def start(self):
@@ -37,24 +37,24 @@ class PyPiPlugin(Plugin):
         )
         self._started = True
 
-    def facade(self):
-        return PyPi(session=self._session, client=self._client)
+    def factory(self):
+        return PyPiWrapper(session=self._session, client=self._client)
 
     @property
     def started(self):
         return self._started
 
 
-class PyPi:
+class PyPiWrapper:
     SEARCH_PATH = '?%3Aaction=search&term={0}&submit=search'
     ROOT_URL = 'https://pypi.python.org/pypi'
 
     def __init__(self, session, client):
         self._session = session
-        self.client = client
+        self._client = client
 
     async def search(self, term):
-        results = await self.client.search({'name': term})
+        results = await self._client.search({'name': term})
         for item in results:
             item['distance'] = levenshtein(str(term), item["name"])
         results.sort(key=itemgetter('distance'))

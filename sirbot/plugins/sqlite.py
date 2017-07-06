@@ -17,7 +17,7 @@ def plugins(loop):
 class SQLitePlugin(Plugin):
     __name__ = 'sqlite'
     __version__ = '0.0.1'
-    __facade__ = 'database'
+    __registry__ = 'database'
 
     def __init__(self, loop):
         super().__init__(loop)
@@ -26,7 +26,7 @@ class SQLitePlugin(Plugin):
         self._started = False
         self._connection = None
 
-    async def configure(self, config, router, session, facades):
+    async def configure(self, config, router, session, registry):
 
         path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'config.yml'
@@ -52,8 +52,8 @@ class SQLitePlugin(Plugin):
     async def start(self):
         self._started = True
 
-    def facade(self):
-        return SQLiteFacade(self._connection, self._connection.cursor())
+    def factory(self):
+        return SQLiteWrapper(self._connection, self._connection.cursor())
 
     @property
     def started(self):
@@ -68,7 +68,7 @@ class SQLitePlugin(Plugin):
 
         self._connection = sqlite3.connect(file)
         self._connection.row_factory = sqlite3.Row
-        db = self.facade()
+        db = self.factory()
 
         await db.execute('''SELECT * FROM metadata''')
         metadata = await db.fetchall()
@@ -89,7 +89,7 @@ class SQLitePlugin(Plugin):
                     logger.debug('Updating database of %s from %s to %s',
                                  name, old_version, current_version)
                     await database_update(
-                        metadata.get(name, {}), self.facade()
+                        metadata.get(name, {}), self.factory()
                     )
                     await db.execute('''INSERT OR REPLACE INTO
                                         metadata (plugin, version)
@@ -104,7 +104,7 @@ class SQLitePlugin(Plugin):
             self._connection.close()
 
 
-class SQLiteFacade:
+class SQLiteWrapper:
     def __init__(self, connection, cursor):
         self._connection = connection
         self.cursor = cursor
