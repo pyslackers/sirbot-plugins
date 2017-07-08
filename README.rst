@@ -1,55 +1,25 @@
 =========================
-Plugins for Sir-bot-a-lot
+Plugins for Sir Bot-a-lot
 =========================
 
 |build|
 
-`Sir-bot-a-lot`_ plugins built for the people and by the people of the `python developers slack community`_.
+Collection of various plugins for `Sir Bot-a-lot`_.
 
-Want to join? `Get an invite`_ !
+The uses of bots are nearly endless and come in all shapes and sizes.
+They can handle Slack shenanigans, monitor the status of a crypto-currency,
+or become your personal assistant. Sir Bot-a-lot can help you get started
+writing your own.
 
-.. _Get an invite: http://pythondevelopers.herokuapp.com/
-.. _python developers slack community: https://pythondev.slack.com/
-.. |build| image:: https://travis-ci.org/pyslackers/sirbot-plugin.svg?branch=master
+Sir Bot-a-lot and sirbot-plugins are projects maintained by the `pyslackers`_
+community. Want to join? `Get an invite`_ !
+
+.. _pyslackers: http://pyslackers.com
+.. _Get an invite: http://pyslackers.com
+
+.. |build| image:: https://travis-ci.org/pyslackers/sirbot-plugins.svg?branch=master
     :alt: Build status
-    :target: https://travis-ci.org/pyslackers/sirbot-plugin
+    :target: https://travis-ci.org/pyslackers/sirbot-plugins
 
-Installation
-------------
+.. _Sir Bot-a-lot: https://github.com/pyslackers/sir-bot-a-lot
 
-**WARNING** plugins requires `sir-bot-a-lot`_.
-
-The sources for sirbot-plugins can be downloaded from the `github repo`_.
-
-.. code-block:: console
-
-    $ git clone https://github.com/pyslackers/sirbot-plugins
-
-Once you have a copy of the source, you can install it with:
-
-.. code-block:: console
-
-    $ pip install git+https://github.com/pyslackers/sir-bot-a-lot
-    $ pip install sirbot-plugins/
-
-To install the development requirements do:
-
-.. code-block:: console
-
-    $ pip install sirbot-plugins/[dev]
-
-.. _sir-bot-a-lot: http://sir-bot-a-lot.readthedocs.io/en/latest/
-.. _github repo: https://github.com/pyslackers/sirbot-plugins
-
-Configuration
--------------
-
-SQLite
-^^^^^^
-
-The default configuration for sirbot-sqlite look like this:
-
-.. code-block:: yaml
-
-    sqlite:
-      file: ':memory:'

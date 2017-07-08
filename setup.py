@@ -84,6 +84,7 @@ setup(
     # installed, specify them here.
     include_package_data=True,
     install_requires=parse_reqs('./requirements/requirements.txt'),
+    python_requires='~=3.5',
     zip_safe=False,
     tests_require=[
         'pytest-runner',
@@ -103,6 +104,7 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Environment :: Console',
     ],
     author=PKG_META['author'],
