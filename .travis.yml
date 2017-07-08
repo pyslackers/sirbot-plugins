@@ -1,10 +1,10 @@
 language: python
 
 python:
-  - "3.5"
-  - "3.6"
-  - "3.7-dev"
-  - "nightly"
+  - '3.5'
+  - '3.6'
+  - '3.7-dev'
+  - 'nightly'
 
 matrix:
   allow_failures:
@@ -18,3 +18,17 @@ install:
 script:
   - python setup.py flake8
   - python setup.py test
+  - python setup.py sdist
+  - python setup.py bdist_wheel
+
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: Ovv
+  password:
+    secure: CTdo9jqZU4T/huamjjDO+95srVVK8E0BsMFPHafekp8/Y/R9MnpTXFCcYEexiWh/CLeVQ8ujMljyZv9eMKSypsin8L+PTKhK9WT3kV1fr0ttZlWUenfP+tkxGaNtgcxl+RQk5GrQAMrQoQM9pr3YsC5BR3TSLuLS6UzOVtmU9ML2w58Io+YoEokZ4nu3zV8Zt+OAxCAfoIj3eSGPrRDWKt4uQlrSrOAN6SLoTWL1T8xytfXPy1l1EMOKt471f51kmBYuBURrdnXEBZgkCJPAPRu3iZDO47vwXa4gY1vxoDiLiL66atGVIm+lV1qNC7s+kzKhUa0gZ4zS8THS5NAwaWzZ7a7JG8yVz9CU9vF2EukhW0uQ43c4cZqm5LwFEawlrD1BoThdfRLBkLIfhBCLTkf2zhMvT0vzcJOqt3mBcXnBpxa5B+o6jbvlxTA2r19/evqKZoSPnmKHwPextOKuwfNcADPjnAZw6XnecrQ71cmmvIjKZnXnqExCAvZ++4Fbw5y1r8pjhD8uD27NBFwnJDSodUBhDNJxRu8q1z4m3JP9ivrfPx0PwuhmBZxRYyDfYDKbnDyBprKB6tFO7xfs/liWCdEAUvO4T4a2jrcnumabInod/UAHc6JqU6fspt0KJt2ybgPEYrm1S1+Q9kSzQWMVZRFdX4sNDo0KJ9Gdbd0=
+  on:
+    repo: pyslackers/sirbot-plugins
+    branch: master
+    python: '3.6'
+    tags: true
