@@ -3,13 +3,13 @@ language: python
 python:
   - '3.5'
   - '3.6'
-  - '3.7-dev'
-  - 'nightly'
+  - 3.7-dev
+  - nightly
 
 matrix:
   allow_failures:
-    - python: "3.7-dev"
-    - python: "nightly"
+    - python: 3.7-dev
+    - python: nightly
 
 install:
   - pip install -r requirements/requirements.txt
@@ -24,9 +24,10 @@ script:
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
+  skip_upload_docs: true
   user: Ovv
   password:
-    secure: CTdo9jqZU4T/huamjjDO+95srVVK8E0BsMFPHafekp8/Y/R9MnpTXFCcYEexiWh/CLeVQ8ujMljyZv9eMKSypsin8L+PTKhK9WT3kV1fr0ttZlWUenfP+tkxGaNtgcxl+RQk5GrQAMrQoQM9pr3YsC5BR3TSLuLS6UzOVtmU9ML2w58Io+YoEokZ4nu3zV8Zt+OAxCAfoIj3eSGPrRDWKt4uQlrSrOAN6SLoTWL1T8xytfXPy1l1EMOKt471f51kmBYuBURrdnXEBZgkCJPAPRu3iZDO47vwXa4gY1vxoDiLiL66atGVIm+lV1qNC7s+kzKhUa0gZ4zS8THS5NAwaWzZ7a7JG8yVz9CU9vF2EukhW0uQ43c4cZqm5LwFEawlrD1BoThdfRLBkLIfhBCLTkf2zhMvT0vzcJOqt3mBcXnBpxa5B+o6jbvlxTA2r19/evqKZoSPnmKHwPextOKuwfNcADPjnAZw6XnecrQ71cmmvIjKZnXnqExCAvZ++4Fbw5y1r8pjhD8uD27NBFwnJDSodUBhDNJxRu8q1z4m3JP9ivrfPx0PwuhmBZxRYyDfYDKbnDyBprKB6tFO7xfs/liWCdEAUvO4T4a2jrcnumabInod/UAHc6JqU6fspt0KJt2ybgPEYrm1S1+Q9kSzQWMVZRFdX4sNDo0KJ9Gdbd0=
+    secure: DdTynt+3zUDb9ZRmGSI5DSscxLm6495ECZQBiAPwzviyXVYvspe6L1cx9XRJpmXV6RUGR4qKhMP/0q7tPs6aXDmC+rYMX1Nr6mvXaZSxAmnkVz+tOy4LCvdOFR94Rr23A0QiqWiIdR+2C7d4qahxBTowtphBkUEnJ7Fxk9Foi8pcgrBy2IJApwNlRzoOtIc1HrwU+FWWzOLssn32tmEUtdoQLgI/E9bycHD0J+nH7XY2JfsVpq6s11PVBxkAguRN7H5uGO+UcgaX4TkErjYJZBMuWPvA/sz6hKBnQOEu2MEsAyR0gqq2NsfIgQc5meM2On1DZ3JMc7jusWRhDti3+xTMy9cQDnG+3E7CuscI/1j4oHtazDSCETXe/ept2q+ZhFTYh+s6SoKvCKflVw04yf75xTf/NJ7tf4/eseVtQd0/NF0MfTmqmubz5OyJGQuKwy1xp0tYkMF6tWGkaA5naPaD/4znDQQ/yodI9fr7bl9CTLYmeyu9DxUtF45GZBZq1UK43v2IwJYXuvJ3LkElyCHEdY+29V6Rx+3lFO9skH151zZfJd3nx58b907+0c9P5hHkbJ8SIuOiFDlugwN7DWnLzkc5BlHK72Qy2jSDpIMXryaWijf7HgCGMzKxqcYm3pQQ6CH0rSO2esHEB4iVnygEmroIUy+pm0XdCAf8M+A=
   on:
     repo: pyslackers/sirbot-plugins
     branch: master
