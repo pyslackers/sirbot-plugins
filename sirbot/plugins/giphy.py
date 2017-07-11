@@ -22,7 +22,7 @@ class GiphyPlugin(Plugin):
         self._token = os.environ.get('SIRBOT_GIPHY_TOKEN') or "dc6zaTOxFJmzC"
         self._loop = loop
 
-    async def configure(self, config, router, session, registry):
+    async def configure(self, config, router, session):
         self._session = session
 
     async def start(self):

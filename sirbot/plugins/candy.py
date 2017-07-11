@@ -1,6 +1,6 @@
 import logging
 
-from sirbot.core import hookimpl, Plugin
+from sirbot.core import hookimpl, Plugin, registry
 
 logger = logging.getLogger(__name__)
 
@@ -17,24 +17,23 @@ class CandyPlugin(Plugin):
     def __init__(self, loop):
         super().__init__(loop)
         self._started = False
-        self._registry = None
 
-    async def configure(self, config, router, session, registry):
-        self._registry = registry
+    async def configure(self, config, router, session,):
+        pass
 
     async def start(self):
         await self._create_db_table()
         self._started = True
 
     def factory(self):
-        return CandyWrapper(self._registry)
+        return CandyWrapper()
 
     @property
     def started(self):
         return self._started
 
     async def _create_db_table(self):
-        db = self._registry.get('database')
+        db = registry.get('database')
         await db.execute('''
             CREATE TABLE IF NOT EXISTS candy (
             user TEXT PRIMARY KEY NOT NULL,
@@ -49,11 +48,11 @@ class CandyPlugin(Plugin):
 
 
 class CandyWrapper:
-    def __init__(self, registry):
-        self._registry = registry
+    def __init__(self):
+        pass
 
     async def add(self, user, count=1):
-        db = self._registry.get('database')
+        db = registry.get('database')
         await db.execute('''SELECT candy FROM candy WHERE user = ? ''',
                          (user, )
                          )
@@ -71,7 +70,7 @@ class CandyWrapper:
         return value
 
     async def top(self, count):
-        db = self._registry.get('database')
+        db = registry.get('database')
         await db.execute('''SELECT * FROM candy ORDER BY candy DESC LIMIT ?''',
                          (count, )
                          )

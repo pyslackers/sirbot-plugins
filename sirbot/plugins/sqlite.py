@@ -26,7 +26,7 @@ class SQLitePlugin(Plugin):
         self._started = False
         self._connection = None
 
-    async def configure(self, config, router, session, registry):
+    async def configure(self, config, router, session):
 
         path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'config.yml'
