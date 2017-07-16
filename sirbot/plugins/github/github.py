@@ -30,10 +30,9 @@ class GitHubPlugin(Plugin):
         self._config = None
         self._router = None
         self._dispatcher = None
-        self._registry = None
         self._verification = None
 
-    async def configure(self, config, router, session, registry):
+    async def configure(self, config, router, session):
         logger.debug('Configuring github plugin')
 
         self._verification = os.environ.get('SIRBOT_GITHUB_SECRET')
@@ -54,11 +53,9 @@ class GitHubPlugin(Plugin):
         self._session = session
         self._config = config
         self._router = router
-        self._registry = registry
 
         self._dispatcher = GitHubDispatcher(
             config=self._config,
-            registry=self._registry,
             verification=self._verification,
             loop=self._loop
         )
@@ -93,9 +90,8 @@ class GitHubWrapper:
 
 class GitHubDispatcher:
 
-    def __init__(self, config, registry, verification, loop):
+    def __init__(self, config, verification, loop):
         self._config = config
-        self._registry = registry
         self._loop = loop
         self._verification = verification
 
@@ -126,7 +122,7 @@ class GitHubDispatcher:
         funcs = self._events.get(event['type'], list())
         logger.debug('%s handlers found for "%s"', len(funcs), event['type'])
         for func in funcs:
-            f = func(event, self._registry)
+            f = func(event)
             ensure_future(coroutine=f, loop=self._loop, logger=logger)
 
         return Response(status=200)

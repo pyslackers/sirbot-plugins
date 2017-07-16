@@ -26,7 +26,7 @@ class PyPiPlugin(Plugin):
         self._loop = loop
         self._started = False
 
-    async def configure(self, config, router, session, registry):
+    async def configure(self, config, router, session):
         self._session = session
 
     async def start(self):

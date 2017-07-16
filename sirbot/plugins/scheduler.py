@@ -19,15 +19,13 @@ class SchedulerPlugin(Plugin):
     def __init__(self, loop):
         super().__init__(loop)
         self._config = None
-        self._registry = None
         self._scheduler = None
         self._loop = loop
         self._started = False
 
-    async def configure(self, config, router, session, registry):
+    async def configure(self, config, router, session):
         logger.debug('Configuring scheduler plugin')
         self._config = config
-        self._registry = registry
         self._scheduler = AsyncIOScheduler(event_loop=self._loop)
 
     async def start(self):
