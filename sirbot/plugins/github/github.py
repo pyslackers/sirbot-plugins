@@ -1,7 +1,8 @@
-import logging
 import os
 import yaml
 import inspect
+import asyncio
+import logging
 
 from gidgethub.aiohttp import GitHubAPI
 from gidgethub.sansio import Event
@@ -9,7 +10,7 @@ from gidgethub import routing
 from aiohttp.web import Response
 
 from sirbot.core import Plugin
-from sirbot.utils import merge_dict, ensure_future
+from sirbot.utils import merge_dict
 
 from .errors import GitHubSetupError
 
@@ -79,15 +80,19 @@ class GitHubPlugin(Plugin):
         except Exception as e:
             logger.exception(e)
             return Response(status=500)
+        else:
+            return Response(status=200)
 
 
 class GitHubWrapper:
     def __init__(self, router):
         self._router = router
 
-    def add_event(self, func, event_type, **kwargs):
+    def register(self, func, event_type, **kwargs):
         logger.debug('Registering event: %s, %s from %s',
                      event_type,
                      func.__name__,
                      inspect.getabsfile(func))
+        if not asyncio.iscoroutinefunction(func):
+            func = asyncio.coroutine(func)
         self._router.add(func, event_type, **kwargs)
