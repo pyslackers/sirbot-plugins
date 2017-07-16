@@ -7,8 +7,8 @@ import sys
 from setuptools import setup, convert_path
 
 
-if sys.version_info < (3, 5):
-    raise RuntimeError('SirBot requires Python 3.5+')
+if sys.version_info < (3, 6):
+    raise RuntimeError('SirBot requires Python 3.6+')
 
 
 def load_package_meta():
@@ -84,7 +84,7 @@ setup(
     # installed, specify them here.
     include_package_data=True,
     install_requires=parse_reqs('./requirements/requirements.txt'),
-    python_requires='~=3.5',
+    python_requires='~=3.6',
     zip_safe=False,
     tests_require=[
         'pytest-runner',
@@ -103,7 +103,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Environment :: Console',
     ],
