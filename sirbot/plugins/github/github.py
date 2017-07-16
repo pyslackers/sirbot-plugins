@@ -9,7 +9,7 @@ import hashlib
 from aiohttp.web import Response
 from collections import defaultdict
 
-from sirbot.core import Plugin, registry
+from sirbot.core import Plugin
 from sirbot.utils import merge_dict, ensure_future
 
 from .errors import GitHubSetupError
@@ -122,7 +122,7 @@ class GitHubDispatcher:
         funcs = self._events.get(event['type'], list())
         logger.debug('%s handlers found for "%s"', len(funcs), event['type'])
         for func in funcs:
-            f = func(event, registry.get('github'))
+            f = func(event)
             ensure_future(coroutine=f, loop=self._loop, logger=logger)
 
         return Response(status=200)
