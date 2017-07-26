@@ -18,7 +18,7 @@ multidict==3.1.0          # via aiohttp, sir-bot-a-lot, yarl
 pluggy==0.4.0             # via sir-bot-a-lot
 pytz==2017.2              # via apscheduler, tzlocal
 pyyaml==3.12              # via sir-bot-a-lot
-sir-bot-a-lot==0.1.1
+sir-bot-a-lot==0.2.0
 six==1.10.0               # via apscheduler
 slimurl==0.7.8            # via aiohttp-xmlrpc
 tzlocal==1.4              # via apscheduler
