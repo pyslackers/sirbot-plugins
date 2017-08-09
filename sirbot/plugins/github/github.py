@@ -31,7 +31,6 @@ class GitHubPlugin(Plugin):
         self._verification = None
         self._http_router = None
         self._github_router = None
-        self._github_api = None
 
     async def configure(self, config, router, session):
         logger.debug('Configuring github plugin')
@@ -51,7 +50,6 @@ class GitHubPlugin(Plugin):
         self._session = session
         self._http_router = router
         self._github_router = routing.Router()
-        self._github_api = GitHubAPI(self._session, 'Sir-bot-a-lot')
 
         logger.debug('Adding github endpoint: %s', self._config['endpoint'])
         self._http_router.add_route(
@@ -63,7 +61,9 @@ class GitHubPlugin(Plugin):
         self._started = True
 
     def factory(self):
-        return GitHubWrapper(self._github_router)
+        return GitHubWrapper(router=self._github_router,
+                             session=self._session,
+                             requester='Sir-bot-a-lot')
 
     async def start(self):
         pass
@@ -84,9 +84,10 @@ class GitHubPlugin(Plugin):
             return Response(status=200)
 
 
-class GitHubWrapper:
-    def __init__(self, router):
-        self._router = router
+class GitHubWrapper(GitHubAPI):
+    def __init__(self, router, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._webhook_router = router
 
     def register(self, func, event_type, **kwargs):
         logger.debug('Registering event: %s, %s from %s',
@@ -95,4 +96,4 @@ class GitHubWrapper:
                      inspect.getabsfile(func))
         if not asyncio.iscoroutinefunction(func):
             func = asyncio.coroutine(func)
-        self._router.add(func, event_type, **kwargs)
+        self._webhook_router.add(func, event_type, **kwargs)
